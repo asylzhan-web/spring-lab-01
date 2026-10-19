@@ -1,0 +1,30 @@
+spring:
+  application:
+    name: spring-lab
+
+server:
+  port: 8080
+
+app:
+  owner: Bekzhigit Asylzhan
+  group: IT1-2411 IS
+  date-pattern: yyyy-MM-dd HH:mm:ss
+  mail:
+    from: no-reply@iitu.kz
+    retry-count: 3
+    timeout: 5s
+    enabled: true
+  locale:
+    default-locale: en
+    supported: [en, ru, kk]
+
+logging:
+  level:
+    web: INFO
+    kz.iitu: INFO
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,env,configprops,conditions
