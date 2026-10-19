@@ -1,0 +1,37 @@
+body {
+    font-family: Arial, sans-serif;
+    background: #f4f6fb;
+    color: #222;
+    padding: 24px 40px;
+}
+
+h1 {
+    color: #1f4e9c;
+}
+
+table {
+    border-collapse: collapse;
+    background: #fff;
+    margin-bottom: 16px;
+}
+
+th, td {
+    border: 1px solid #9aa9c7;
+    padding: 6px 14px;
+    text-align: left;
+}
+
+th {
+    background: #dde6f7;
+}
+
+.flash {
+    background: #e3f6e3;
+    border: 1px solid #66a866;
+    padding: 8px 12px;
+    color: #225522;
+}
+
+input, button {
+    padding: 4px 8px;
+}
