@@ -34,7 +34,8 @@ class PasswordStorageTest extends PostgresIntegrationTest {
 
         assertThat(hashes).containsOnlyKeys("user", "admin");
         hashes.values().forEach(hash -> {
-            assertThat(hash).matches("\\$2a\\$10\\$[./A-Za-z0-9]{53}");   // 60 characters: $2a$ + cost + salt + hash
+            // {bcrypt} (added by V6 for variant 4) + 60 characters: $2a$ + cost + 22 of salt + 31 of hash
+            assertThat(hash).matches("\\{bcrypt}\\$2a\\$10\\$[./A-Za-z0-9]{53}");
             assertThat(hash).doesNotContain("user123").doesNotContain("admin123");
         });
     }

@@ -1,0 +1,11 @@
+# A local PostgreSQL for the lab: docker compose up -d
+# Teaching credentials only; they match the defaults in application.yml.
+services:
+  postgres:
+    image: postgres:17
+    environment:
+      POSTGRES_DB: springlab
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"

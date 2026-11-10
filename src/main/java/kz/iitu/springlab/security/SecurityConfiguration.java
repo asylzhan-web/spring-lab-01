@@ -6,9 +6,13 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.DelegatingPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+
+import java.util.Map;
 
 @Configuration
 @EnableWebSecurity
@@ -38,9 +42,15 @@ public class SecurityConfiguration {
         return http.build();
     }
 
-    // Answers «is this the right password?». BCrypt: a per-user random salt and a work factor (10).
+    // Answers «is this the right password?».
+    // Variant 4: Argon2 instead of BCrypt. New passwords are hashed with Argon2id ({argon2} prefix);
+    // the hashes already in the table were tagged {bcrypt} by V6 and are still verified by BCrypt.
+    // A stored value without an {id} prefix is rejected ("each password must have a password encoding prefix").
     @Bean
     PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+        Map<String, PasswordEncoder> encoders = Map.of(
+                "argon2", Argon2PasswordEncoder.defaultsForSpringSecurity_v5_8(),   // memory-hard: 16 MiB, 2 passes
+                "bcrypt", new BCryptPasswordEncoder());                            // cost 10, kept for old hashes
+        return new DelegatingPasswordEncoder("argon2", encoders);
     }
 }

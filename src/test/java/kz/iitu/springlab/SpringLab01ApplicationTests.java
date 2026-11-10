@@ -21,7 +21,7 @@ class SpringLab01ApplicationTests extends PostgresIntegrationTest {
     void flywayOwnsTheSchema() {
         assertThat(jdbc.queryForList("select version from flyway_schema_history where success order by installed_rank",
                 String.class))
-                .containsExactly("1", "2", "5");
+                .containsExactly("1", "2", "5", "6");
         assertThat(jdbc.queryForObject("select count(*) from book", Integer.class)).isEqualTo(5);
     }
 }

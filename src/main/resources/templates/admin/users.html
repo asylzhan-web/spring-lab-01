@@ -23,5 +23,17 @@
     </tr>
     </tbody>
 </table>
+<p th:if="${message}" class="flash" th:text="${message}">message</p>
+<p th:if="${error}" class="flash error" th:text="${error}">error</p>
+
+<h2>Create a user</h2>
+<p>Variant 4: the password of a new user is hashed with Argon2 (<code>{argon2}</code>); the existing
+    <code>{bcrypt}</code> hashes still verify, because the encoder is chosen by the <code>{id}</code> prefix.</p>
+<form method="post" th:action="@{/admin/users}">
+    <input name="username" placeholder="Username" required pattern="[A-Za-z0-9._-]{3,60}">
+    <input name="password" type="password" placeholder="Password" required minlength="6" maxlength="100">
+    <label><input name="administrator" type="checkbox" value="true"> administrator</label>
+    <button type="submit">Create</button>
+</form>
 </body>
 </html>
