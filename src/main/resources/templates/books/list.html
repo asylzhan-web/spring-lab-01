@@ -1,34 +1,56 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <title th:text="${title}">Catalogue</title>
     <link rel="stylesheet" th:href="@{/css/app.css}">
 </head>
 <body>
+<header th:replace="~{fragments/header :: header}"></header>
 <h1 th:text="${title}">Catalogue</h1>
-<p th:if="${author}">Filter by author: <b th:text="${author}">author</b></p>
+<form method="get" th:action="@{/books}" class="filter">
+    <input name="author" th:value="${author}" placeholder="Filter by author">
+    <button type="submit">Filter</button>
+    <a th:if="${author}" th:href="@{/books}">Show all</a>
+</form>
 <p th:if="${message}" class="flash" th:text="${message}">message</p>
+<p th:if="${error}" class="flash error" th:text="${error}">error</p>
 <table>
     <thead>
-    <tr><th>ID</th><th>Title</th><th>Author</th><th>Year</th></tr>
+    <tr>
+        <th>ID</th><th>Title</th><th>Author</th><th>Genre</th><th>Year</th>
+        <th sec:authorize="hasRole('ADMIN')"></th>
+    </tr>
     </thead>
     <tbody>
     <tr th:each="book : ${books}">
         <td th:text="${book.id}">1</td>
         <td th:text="${book.title}">Title</td>
-        <td th:text="${book.author}">Author</td>
+        <td th:text="${book.author} ?: '—'">Author</td>
+        <td th:text="${book.genre}">NOVEL</td>
         <td th:text="${book.year}">2024</td>
+        <td sec:authorize="hasRole('ADMIN')">
+            <form th:action="@{/books/{id}/delete(id=${book.id})}" method="post" class="inline">
+                <button type="submit">Delete</button>
+            </form>
+        </td>
     </tr>
     </tbody>
 </table>
-<h2>Add a book</h2>
-<form method="post" th:action="@{/books}">
-    <input name="title" placeholder="Title" required>
-    <input name="author" placeholder="Author" required>
-    <input name="year" type="number" placeholder="Year" required>
-    <button type="submit">Add</button>
-</form>
-<p><a href="/">Start page</a></p>
+
+<!-- Only an administrator sees the form; POST /books is refused to everybody else on the server anyway -->
+<section sec:authorize="hasRole('ADMIN')">
+    <h2>Add a book</h2>
+    <form method="post" th:action="@{/books}">
+        <input name="title" placeholder="Title" required maxlength="200">
+        <input name="author" placeholder="Author (optional)" maxlength="120">
+        <select name="genre" required>
+            <option th:each="g : ${genres}" th:value="${g}" th:text="${g}">NOVEL</option>
+        </select>
+        <input name="year" type="number" placeholder="Year" required min="1" max="2100">
+        <button type="submit">Add</button>
+    </form>
+</section>
 </body>
 </html>

@@ -1,7 +1,10 @@
 package kz.iitu.springlab.web;
 
+import jakarta.validation.Valid;
 import kz.iitu.springlab.catalog.Book;
+import kz.iitu.springlab.catalog.BookRequest;
 import kz.iitu.springlab.catalog.BookService;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -18,6 +21,8 @@ import org.springframework.web.server.ResponseStatusException;
 import java.net.URI;
 import java.util.List;
 
+// Lab 10: no URL rule opens /api/**, so the last rule of the filter chain (denyAll) closes this controller.
+// BookService still checks the role itself (@PreAuthorize), in case /api/** is ever opened.
 @RestController
 @RequestMapping("/api/books")
 public class BookRestController {
@@ -34,18 +39,17 @@ public class BookRestController {
         return service.findAll(author).stream().limit(limit).toList();
     }
 
-    // Variant 4: paging; the total number of books is returned in the X-Total-Count header
+    // Variant 4 (lab 5): paging; the total number of books is returned in the X-Total-Count header
     @GetMapping("/page")
     public ResponseEntity<List<Book>> page(@RequestParam(defaultValue = "0") int page,
                                            @RequestParam(defaultValue = "5") int size) {
         if (page < 0 || size <= 0) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "page must be >= 0 and size must be > 0");
         }
-        List<Book> all = service.findAll(null);
-        List<Book> content = all.stream().skip((long) page * size).limit(size).toList();
+        Page<Book> result = service.findPage(page, size);
         return ResponseEntity.ok()
-                .header("X-Total-Count", String.valueOf(all.size()))
-                .body(content);
+                .header("X-Total-Count", String.valueOf(result.getTotalElements()))
+                .body(result.getContent());
     }
 
     @GetMapping("/{id}")
@@ -56,14 +60,14 @@ public class BookRestController {
     }
 
     @PostMapping
-    public ResponseEntity<Book> create(@RequestBody Book book) {
-        Book created = service.create(book);
-        return ResponseEntity.created(URI.create("/api/books/" + created.id())).body(created);
+    public ResponseEntity<Book> create(@Valid @RequestBody BookRequest request) {
+        Book created = service.create(request);
+        return ResponseEntity.created(URI.create("/api/books/" + created.getId())).body(created);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Book> replace(@PathVariable long id, @RequestBody Book book) {
-        return service.replace(id, book)
+    public ResponseEntity<Book> replace(@PathVariable long id, @Valid @RequestBody BookRequest request) {
+        return service.replace(id, request)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }

@@ -28,7 +28,22 @@
 	</scm>
 	<properties>
 		<java.version>25</java.version>
+		<bouncycastle.version>1.86</bouncycastle.version>
+		<embedded-postgres.version>2.2.2</embedded-postgres.version>
+		<embedded-postgres-binaries.version>17.11.0</embedded-postgres-binaries.version>
 	</properties>
+	<dependencyManagement>
+		<dependencies>
+			<!-- PostgreSQL 17 binaries for the embedded database used by the tests and LocalDevApplication -->
+			<dependency>
+				<groupId>io.zonky.test.postgres</groupId>
+				<artifactId>embedded-postgres-binaries-bom</artifactId>
+				<version>${embedded-postgres-binaries.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -50,6 +65,38 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-thymeleaf</artifactId>
 		</dependency>
+		<!-- Lab 10: the security subsystem -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+		<dependency>   <!-- for sec:authorize in Thymeleaf templates -->
+			<groupId>org.thymeleaf.extras</groupId>
+			<artifactId>thymeleaf-extras-springsecurity6</artifactId>
+		</dependency>
+		<dependency>   <!-- variant 4: Argon2PasswordEncoder needs Bouncy Castle -->
+			<groupId>org.bouncycastle</groupId>
+			<artifactId>bcprov-jdk18on</artifactId>
+			<version>${bouncycastle.version}</version>
+		</dependency>
+		<!-- Persistence: JPA, Flyway owns the schema, PostgreSQL -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-flyway</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.flywaydb</groupId>
+			<artifactId>flyway-database-postgresql</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<scope>runtime</scope>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-configuration-processor</artifactId>
@@ -65,6 +112,17 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-webmvc-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>   <!-- a real PostgreSQL started from the tests, no Docker needed -->
+			<groupId>io.zonky.test</groupId>
+			<artifactId>embedded-postgres</artifactId>
+			<version>${embedded-postgres.version}</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

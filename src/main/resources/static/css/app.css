@@ -32,6 +32,43 @@ th {
     color: #225522;
 }
 
-input, button {
+input, button, select {
     padding: 4px 8px;
+}
+
+/* Lab 10: who is logged in, and what they may use */
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    background: #fff;
+    border: 1px solid #9aa9c7;
+    padding: 8px 14px;
+    margin-bottom: 8px;
+}
+
+.topbar nav a {
+    margin-right: 14px;
+}
+
+.roles {
+    color: #555;
+    font-family: Consolas, monospace;
+    font-size: 0.9em;
+}
+
+form.inline {
+    display: inline;
+    margin-left: 8px;
+}
+
+.filter {
+    margin-bottom: 12px;
+}
+
+.flash.error {
+    background: #fbe3e3;
+    border-color: #b85c5c;
+    color: #6b1f1f;
 }

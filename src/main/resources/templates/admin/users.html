@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${title}">Administration</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<header th:replace="~{fragments/header :: header}"></header>
+<h1 th:text="${title}">Administration</h1>
+<p>Users from the <code>app_user</code> and <code>user_role</code> tables. The password column shows only
+    how each hash was made — the salt and the hash itself are never sent to the browser.</p>
+<table>
+    <thead>
+    <tr><th>Username</th><th>Roles</th><th>Enabled</th><th>Password stored as</th></tr>
+    </thead>
+    <tbody>
+    <tr th:each="u : ${users}">
+        <td th:text="${u.username}">user</td>
+        <td th:text="${#strings.listJoin(u.roles, ', ')}">USER</td>
+        <td th:text="${u.enabled} ? 'yes' : 'no'">yes</td>
+        <td><code th:text="${u.storedAs}">BCrypt $2a$10$ (cost 10)</code></td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>
